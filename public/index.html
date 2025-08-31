@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>やさしいチャット</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="login">
+    <h2>ルームに参加</h2>
+    <input id="nameInput" placeholder="名前を入力">
+    <input id="roomInput" placeholder="ルームキーを入力">
+    <button id="joinBtn">参加</button>
+  </div>
+
+  <div id="chat" style="display:none;">
+    <h2 id="roomTitle"></h2>
+    <div id="users"></div>
+    <div id="messages"></div>
+    <input id="msgInput" placeholder="メッセージを入力">
+    <button id="sendBtn">送信</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
