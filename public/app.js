@@ -1,36 +1,10 @@
-const socket = io();
-const loginDiv = document.getElementById("login");
-const chatDiv = document.getElementById("chat");
-const nameInput = document.getElementById("nameInput");
-const roomInput = document.getElementById("roomInput");
-const joinBtn = document.getElementById("joinBtn");
-const messages = document.getElementById("messages");
-const msgInput = document.getElementById("msgInput");
-const sendBtn = document.getElementById("sendBtn");
-const usersDiv = document.getElementById("users");
-const roomTitle = document.getElementById("roomTitle");
-
-let currentRoom = "";
-
-joinBtn.onclick = () => {
-  const name = nameInput.value || "名無しさん";
-  const room = roomInput.value || "default";
-  currentRoom = room;
-
-  socket.emit("joinRoom", { room, name });
-
-  loginDiv.style.display = "none";
-  chatDiv.style.display = "block";
-  roomTitle.textContent = `ルーム: ${room}`;
-};
-
-sendBtn.onclick = () => {
-  const msg = msgInput.value;
-  if (msg.trim()) {
-    socket.emit("chatMessage", msg);
-    msgInput.value = "";
+function scrollToBottomIfNeeded() {
+  const threshold = 50; // どれくらい下に近いか判定（px）
+  const isAtBottom = messages.scrollHeight - messages.scrollTop - messages.clientHeight < threshold;
+  if (isAtBottom) {
+    messages.scrollTop = messages.scrollHeight;
   }
-};
+}
 
 socket.on("chatMessage", ({ name, text, senderId }) => {
   const div = document.createElement("div");
@@ -39,8 +13,8 @@ socket.on("chatMessage", ({ name, text, senderId }) => {
   div.textContent = `${name}: ${text}`;
   messages.appendChild(div);
 
-  // 📌 自動スクロール
-  messages.scrollTop = messages.scrollHeight;
+  // 📌 一番下にいるときだけ追従
+  scrollToBottomIfNeeded();
 });
 
 socket.on("chatHistory", (history) => {
@@ -52,10 +26,6 @@ socket.on("chatHistory", (history) => {
     messages.appendChild(div);
   });
 
-  // 📌 履歴読み込み後も最新へスクロール
+  // 📌 最初は強制的に一番下へ
   messages.scrollTop = messages.scrollHeight;
-});
-
-socket.on("updateUsers", (users) => {
-  usersDiv.textContent = "参加者: " + users.join(", ");
 });
